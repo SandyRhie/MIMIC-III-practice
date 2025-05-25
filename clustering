@@ -1,0 +1,22 @@
+# 03_clustering.ipynb
+
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+# 잠재 표현 로드
+Z = np.load('data/Z_train.npy')
+
+# K-means 예시
+k_range = range(2, 10)
+scores = []
+for k in k_range:
+    km = KMeans(n_clusters=k, random_state=42).fit(Z)
+    scores.append(silhouette_score(Z, km.labels_))
+
+best_k = k_range[int(np.argmax(scores))]
+print(f'Best K: {best_k}')
+
+# 최적 군집화
+kmeans = KMeans(n_clusters=best_k, random_state=42).fit(Z)
+np.save('data/cluster_labels.npy', kmeans.labels_)
