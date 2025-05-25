@@ -1,0 +1,20 @@
+# 01_data_preparation.ipynb
+
+import pandas as pd
+from sqlalchemy import create_engine
+
+# 예시: MIMIC-III 로컬 Postgres 연결
+engine = create_engine('postgresql://username:password@localhost:5432/mimic')
+
+# 환자 기본 정보 로드
+query = """
+SELECT subject_id, hadm_id, icustay_id, charttime, itemid, value
+FROM chartevents
+WHERE itemid IN (SELECT itemid FROM d_items WHERE label LIKE '%ANTIDEPRESSANT%')
+"""
+df = pd.read_sql(query, engine)
+
+# 전처리: 날짜 정렬, 결측 제거
+df = df.sort_values(['subject_id','charttime']).dropna()
+
+df.to_parquet('data/antidepressant_timeseries.parquet')
