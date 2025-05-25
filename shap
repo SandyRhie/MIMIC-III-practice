@@ -1,0 +1,22 @@
+# 04_evaluation_shap.ipynb
+
+import numpy as np
+import shap
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# 데이터 및 레이블 로드
+Z = np.load('data/Z_train.npy')
+labels = np.load('data/cluster_labels.npy')
+
+# 군집별 예측 모델 (예: 군집 0 vs 나머지)
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+y = (labels == 0).astype(int)
+rf.fit(Z, y)
+
+# SHAP 해석
+explainer = shap.TreeExplainer(rf)
+shap_values = explainer.shap_values(Z)
+
+shap.summary_plot(shap_values[1], Z, feature_names=[f'z{i}' for i in range(Z.shape[1])])
