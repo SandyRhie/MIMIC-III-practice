@@ -1,0 +1,3 @@
+git add 01_data_preparation.ipynb 02_vae_embedding.ipynb 03_clustering.ipynb 04_evaluation_shap.ipynb
+git commit -m "Add practice notebooks for MIMIC-III VAE clustering workflow"
+git push origin add-practice-notebooks
